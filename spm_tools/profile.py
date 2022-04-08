@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.ndimage import map_coordinates
 
-from ._helpers import _uniform_XYZ
+from ._helpers import uniform_XYZ
 
 
 class ProfileBase:
@@ -20,7 +20,7 @@ class ProfileBase:
         n_averages=None,
         map_kw=None
     ):
-        X, Y, Z = _uniform_XYZ(*args, extent=extent, origin=origin)
+        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
         # Output values
         pixel_coords = self._pixel_coords(
             X, Y, Z, n_points or self.n_points, n_averages or self.n_averages

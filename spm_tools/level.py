@@ -1,7 +1,7 @@
 """Tools for levelling SPM images."""
 import numpy as np
 
-from ._helpers import _uniform_XYZ, _uniform_XY
+from ._helpers import uniform_XYZ, uniform_XY
 
 
 def poly_surface(X, Y, coeffs):
@@ -147,11 +147,11 @@ class LevelBase:
                     " first.",
                 )
             )
-        X, Y, Z = _uniform_XYZ(*args, extent=extent, origin=origin)
+        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
         return Z - self.surface
 
     def func_subtract(self, *args):
-        X, Y, Z = _uniform_XYZ(*args)
+        X, Y, Z = uniform_XYZ(*args)
         return Z - self.evaluate(X, Y)
 
 
@@ -178,7 +178,7 @@ class PolyLevel(LevelBase):
         allowed_coeffs=None,
         rcond=None,
     ):
-        X, Y, Z = _uniform_XYZ(*args, extent=extent, origin=origin)
+        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
         self.coeffs = fit_poly_surface(
             X,
             Y,
@@ -192,5 +192,5 @@ class PolyLevel(LevelBase):
         return self
 
     def evaluate(self, X, Y):
-        X, Y = _uniform_XY(X, Y)
+        X, Y = uniform_XY(X, Y)
         return poly_surface(X, Y, self.coeffs)

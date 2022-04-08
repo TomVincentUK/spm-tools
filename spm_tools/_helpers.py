@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def _uniform_XY(X, Y):
+def uniform_XY(X, Y):
     """Return uniform x and y arguments for 1D and 2D inputs.
 
     Parameters
@@ -30,7 +30,7 @@ def _uniform_XY(X, Y):
     return X, Y
 
 
-def _uniform_XYZ(*args, extent=None, origin=None):
+def uniform_XYZ(*args, extent=None, origin=None):
     """Return uniform x, y and z arguments for several different input forms.
 
     Call signature::
