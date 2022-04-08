@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.ndimage import map_coordinates
 
-from ._helpers import uniform_XYZ
+from .helpers import uniform_XYZ
 
 
 class ProfileBase:

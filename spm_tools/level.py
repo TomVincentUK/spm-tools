@@ -1,7 +1,7 @@
 """Tools for levelling SPM images."""
 import numpy as np
 
-from ._helpers import uniform_XYZ, uniform_XY
+from .helpers import uniform_XYZ, uniform_XY
 
 
 def poly_surface(X, Y, coeffs):
