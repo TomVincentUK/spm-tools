@@ -1,3 +1,6 @@
+"""
+Temporary testing script while I'm working on line profile code
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from spm_tools.example_data import anisotropic
@@ -20,7 +23,7 @@ for row, origin in zip(axes, ("upper", "lower")):
 fig.tight_layout()
 plt.show()
 
-profile = LinearProfile(start=(1/8, 1/8), end=(1/8, 1), width=0.2)
+profile = LinearProfile(start=(1 / 8, 1 / 8), end=(1 / 8, 1), width=0.2)
 fig, axes = plt.subplots(ncols=2, nrows=2)
 for row, origin in zip(axes, ("upper", "lower")):
     row[0].imshow(Z, extent=extent, origin=origin)
@@ -31,7 +34,7 @@ for row, origin in zip(axes, ("upper", "lower")):
 fig.tight_layout()
 plt.show()
 
-profile = LinearProfile(start=(1/8, 1/8), end=(1/8, 1), width=0.2)
+profile = LinearProfile(start=(1 / 8, 1 / 8), end=(1 / 8, 1), width=0.2)
 fig, axes = plt.subplots(ncols=2, nrows=1)
 axes[0].pcolormesh(X, Y, Z)
 axes[0].plot(*np.array([profile.start, profile.end]).T, c="w")

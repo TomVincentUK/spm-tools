@@ -1,4 +1,6 @@
-# import numpy as np
+"""
+Temporary testing script while I'm working on image leveling code
+"""
 import matplotlib.pyplot as plt
 from spm_tools.example_data import anisotropic
 from spm_tools.level import PolyLevel
@@ -9,7 +11,7 @@ Y = test_image["Y"]
 Z = test_image["Z"]
 extent = test_image["extent"]
 
-poly_level = PolyLevel().fit(Z, extent=extent, origin='lower')
+poly_level = PolyLevel().fit(Z, extent=extent, origin="lower")
 plane = poly_level.surface
 subtracted = poly_level.subtract(Z)
 
