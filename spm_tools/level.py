@@ -1,4 +1,6 @@
 """Tools for levelling SPM images."""
+import warnings
+
 import numpy as np
 
 from .helpers import uniform_XYZ, uniform_XY
@@ -126,6 +128,70 @@ def fit_poly_surface(X, Y, Z, order=1, XY_order=None, allowed_coeffs=None, rcond
     return coeffs
 
 
+def geometric_median(points, dr=None, max_iter=1000):
+    """Calculate a geometric median using Weiszfeld's algorithm.
+
+    Parameters
+    ----------
+    points : array_like
+        The array of points from which to calculate the geometric median.
+        The size of the first axis is used as the number of dimensions for the
+        space, `ndim`.
+    dr : float
+        The convergence threshold for the algorithm. The function will return
+        when the difference between successive estimates are closer than `dr`.
+        If not specified, the default value is 1e-6 times the minimum
+        dimension-wise standard deviation.
+    max_iter : float
+        The maximum number of iterations.
+
+    Returns
+    -------
+    geo_med : numpy.ndarray
+        An `ndim`-length array containing estimated geometric median vector.
+    """
+    points = np.asarray(points)
+    ndim = points.shape[0]
+    points = points.reshape(ndim, -1).T
+
+    # If all vectors are the same, just return that vector
+    if (points - points[0] == 0).all():
+        geo_med = points[0]
+        return geo_med
+
+    if dr is None:
+        dr = 1e-6 * points.std(axis=0).min()
+
+    geo_med_est = np.median(points, axis=0)
+    dr_i = 10 * dr
+    i = 0
+    while (dr_i > dr) and (i < max_iter):
+        dists = np.linalg.norm(points - geo_med_est, axis=-1)[..., np.newaxis]
+        zero_vals = (dists == 0).flatten()
+
+        weights = 1 / dists[~zero_vals]
+        weight_sum = weights.sum()
+        geo_med = (weights * points[~zero_vals, :]).sum(axis=0) / weight_sum
+        dr_i = np.linalg.norm(geo_med - geo_med_est)
+
+        # Account for cases where the estimate is one of the points
+        n_zeros = zero_vals.sum()
+        if (dr_i != 0) and (n_zeros != 0):
+            mix_factor = n_zeros / (dr_i * weight_sum)
+            geo_med = (
+                max(0, 1 - mix_factor) * geo_med + min(1, mix_factor) * geo_med_est
+            )
+            dr_i = np.linalg.norm(geo_med - geo_med_est)
+
+        i += 1
+        geo_med_est[:] = geo_med
+
+    if i >= max_iter:
+        warnings.warn("`geometric_median` did not converge.", category=UserWarning)
+
+    return geo_med
+
+
 class LevelBase:
     """Base class for levelling objects."""
 
@@ -194,3 +260,28 @@ class PolyLevel(LevelBase):
     def evaluate(self, X, Y):
         X, Y = uniform_XY(X, Y)
         return poly_surface(X, Y, self.coeffs)
+
+
+class FacetLevel(LevelBase):
+    def __init__(self, normal=None):
+        if normal is None:
+            self.normal = np.array([0, 0, 1])
+        else:
+            normal = np.asarray(normal)
+            if normal.size != 3:
+                raise TypeError("`normal` must be a length-3 vector")
+            self.normal = normal / np.linalg.norm(normal)
+        super().__init__()
+
+    def fit(self, *args, extent=None, origin=None):
+        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
+
+        dZ_by_dY, dZ_by_dX = np.gradient(Z, Y[:, 0], X[0])
+        self.gradient = geometric_median([dZ_by_dX, dZ_by_dY])
+
+        self.surface = self.evaluate(X, Y)
+        return self
+
+    def evaluate(self, X, Y):
+        X, Y = uniform_XY(X, Y)
+        return self.gradient[0] * X + self.gradient[1] * Y

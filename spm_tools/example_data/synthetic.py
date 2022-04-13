@@ -23,7 +23,7 @@ check_diag = dict(
     **coords
 )
 anisotropic = dict(
-    Z=(X % square_size) / square_size + np.floor(Y / square_size), **coords
+    Z=(X % square_size) / square_size + np.floor(Y / square_size) / 2, **coords
 )
 
 # Radially symmetric functions

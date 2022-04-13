@@ -35,7 +35,7 @@ def uniform_XYZ(*args, extent=None, origin=None):
 
     Call signature::
 
-        _uniform_XYZ([X, Y,] Z, extent=None, origin=None)
+        uniform_XYZ([X, Y,] Z, extent=None, origin=None)
 
     This function allows image size and shape to be specified in several
     different ways, based on the image plotting functions in `matplotlib`:
@@ -83,7 +83,7 @@ def uniform_XYZ(*args, extent=None, origin=None):
         Three 2D arrays of the same shape containing x, y, and z coordinates.
     """
     n_args = len(args)
-
+    
     # matplotlib imshow style behaviour
     if n_args == 1:
         Z = np.asarray(args[0])
@@ -122,5 +122,8 @@ def uniform_XYZ(*args, extent=None, origin=None):
             X, Y = np.meshgrid(X, Y)
         elif not (X.shape == Y.shape == Z.shape):
             raise TypeError("`X` and `Y` must be 1D, or have the same shape as `Z`")
-
+    else:
+        raise TypeError(
+            f"`uniform_XYZ` expected 1 or 3 non-keyword arguments, not {n_args}."
+        )
     return X, Y, Z
