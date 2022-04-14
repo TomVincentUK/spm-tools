@@ -131,6 +131,9 @@ def fit_poly_surface(X, Y, Z, order=1, XY_order=None, allowed_coeffs=None, rcond
 def geometric_median(points, dr=None, max_iter=1000):
     """Calculate a geometric median using Weiszfeld's algorithm.
 
+    Based on the modified algorithm described by Vardi and Zhang in:
+        https://doi.org/10.1073/pnas.97.4.1423
+
     Parameters
     ----------
     points : array_like
