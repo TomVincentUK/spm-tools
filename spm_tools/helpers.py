@@ -83,7 +83,7 @@ def uniform_XYZ(*args, extent=None, origin=None):
         Three 2D arrays of the same shape containing x, y, and z coordinates.
     """
     n_args = len(args)
-    
+
     # matplotlib imshow style behaviour
     if n_args == 1:
         Z = np.asarray(args[0])
