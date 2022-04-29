@@ -3,7 +3,7 @@ import warnings
 
 import numpy as np
 
-from .helpers import uniform_XYZ, uniform_XY
+from .helpers import uniform_XYZ_decorator
 
 
 def poly_surface(X, Y, coeffs):
@@ -195,96 +195,19 @@ def geometric_median(points, dr=None, max_iter=1000):
     return geo_med
 
 
-class LevelBase:
-    """Base class for levelling objects."""
-
-    def __init__(self):
-        self.surface = None
-
-    def fit(self, *args):
-        raise NotImplementedError
-
-    def evaluate(self, X, Y):
-        raise NotImplementedError
-
-    def subtract(self, *args, extent=None, origin=None):
-        if self.surface is None:
-            raise TypeError(
-                "".join(
-                    "Background not yet evaluated. Try running ",
-                    f"`{type(self).__name__}.fit()`",
-                    " first.",
-                )
-            )
-        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
-        return Z - self.surface
-
-    def func_subtract(self, *args):
-        X, Y, Z = uniform_XYZ(*args)
-        return Z - self.evaluate(X, Y)
+@uniform_XYZ_decorator
+def poly_level(X, Y, Z, **kwargs):
+    coeffs = fit_poly_surface(X, Y, Z, **kwargs)
+    surface = poly_surface(X, Y, coeffs)
+    leveled = Z - surface
+    return leveled, surface, coeffs
 
 
-class PolyLevel(LevelBase):
-    def __init__(self, coeffs=None):
-        if coeffs is None:
-            self.coeffs = np.array([[0]])
-        else:
-            coeffs = np.asarray(coeffs)
-            if coeffs.ndim < 2:
-                coeffs = coeffs.reshape(coeffs.shape + (2 - coeffs.ndim) * (1,))
-            elif coeffs.ndim > 2:
-                raise TypeError("`coeffs` must be 1D or 2D")
-            self.coeffs = coeffs
-        super().__init__()
-
-    def fit(
-        self,
-        *args,
-        extent=None,
-        origin=None,
-        order=1,
-        XY_order=None,
-        allowed_coeffs=None,
-        rcond=None,
-    ):
-        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
-        self.coeffs = fit_poly_surface(
-            X,
-            Y,
-            Z,
-            order=order,
-            XY_order=XY_order,
-            allowed_coeffs=allowed_coeffs,
-            rcond=rcond,
-        )
-        self.surface = self.evaluate(X, Y)
-        return self
-
-    def evaluate(self, X, Y):
-        X, Y = uniform_XY(X, Y)
-        return poly_surface(X, Y, self.coeffs)
-
-
-class FacetLevel(LevelBase):
-    def __init__(self, normal=None):
-        if normal is None:
-            self.normal = np.array([0, 0, 1])
-        else:
-            normal = np.asarray(normal)
-            if normal.size != 3:
-                raise TypeError("`normal` must be a length-3 vector")
-            self.normal = normal / np.linalg.norm(normal)
-        super().__init__()
-
-    def fit(self, *args, extent=None, origin=None):
-        X, Y, Z = uniform_XYZ(*args, extent=extent, origin=origin)
-
-        dZ_by_dY, dZ_by_dX = np.gradient(Z, Y[:, 0], X[0])
-        self.gradient = geometric_median([dZ_by_dX, dZ_by_dY])
-
-        self.surface = self.evaluate(X, Y)
-        return self
-
-    def evaluate(self, X, Y):
-        X, Y = uniform_XY(X, Y)
-        return self.gradient[0] * X + self.gradient[1] * Y
+@uniform_XYZ_decorator
+def facet_level(X, Y, Z, **kwargs):
+    dZ_by_dY_full, dZ_by_dX_full = np.gradient(Z, Y[:, 0], X[0])
+    dZ_by_dX, dZ_by_dY = geometric_median([dZ_by_dX_full, dZ_by_dY_full])
+    coeffs = np.array([[0, dZ_by_dY], [dZ_by_dX, 0]])
+    surface = poly_surface(X, Y, coeffs)
+    leveled = Z - surface
+    return leveled, surface, coeffs
