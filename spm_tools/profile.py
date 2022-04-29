@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.ndimage import map_coordinates
 
-from .helpers import uniform_XYZ, uniform_XYZ_decorator
+from .helpers import uniform_XYZ_decorator
 
 MAP_DEFAULTS = {"order": 1, "mode": "constant", "cval": np.nan}
 
