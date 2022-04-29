@@ -12,17 +12,6 @@ Y = test_image["Y"]
 Z = test_image["Z"]
 extent = test_image["extent"]
 
-# profile = LinearProfile(start=(255, 255), end=(255, 0), width=10)
-# fig, axes = plt.subplots(ncols=2, nrows=2)
-# for row, origin in zip(axes, ("upper", "lower")):
-#     row[0].imshow(Z, origin=origin)
-#     row[0].plot(*np.array([profile.start, profile.end]).T, c="w")
-#     row[0].scatter(*profile.start, c="r")
-#     row[0].scatter(*profile.corners.T, c="w", s=1)
-#     row[1].plot(*profile.extract(Z, origin=origin))
-# fig.tight_layout()
-# plt.show()
-
 start = 255, 255
 end = 255, 0
 width = 10
