@@ -28,9 +28,12 @@ def _import_gsf(path):
         if key in metadata:
             metadata[key] = np.float(metadata[key])
 
-    Z = np.frombuffer(
-        b"".join(lines[1 + n_metadata_lines :])[4:], dtype=np.float32
-    ).reshape(metadata["YRes"], metadata["XRes"])
+    remaining_buffer = b"".join(lines[1 + n_metadata_lines :])
+    nul_bites = ((len(remaining_buffer) - 1) % 4) + 1
+
+    Z = np.frombuffer(remaining_buffer[nul_bites:], dtype=np.float32).reshape(
+        metadata["YRes"], metadata["XRes"]
+    )
 
     x = np.linspace(0, 1, metadata["XRes"])
     y = np.linspace(0, 1, metadata["YRes"])
