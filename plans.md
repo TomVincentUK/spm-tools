@@ -9,6 +9,7 @@ This should be a library to supplement the already existing image analysis tools
 * numpy style docstrings
 
 ## Things to add
+- [ ] Optional mask argument, to exclude some values from the analysis in the levelling and line correction code
 - [ ] Laplace solver for correcting defects
 - [ ] Grain marking (for SPM-specific defects not already covered by scikit image)
 - [ ] n-point levelling
