@@ -20,4 +20,3 @@ This should be a library to supplement the already existing image analysis tools
 
 ## Things to maybe add (in future)
 - [ ] Reading various SPM datafiles
-- [ ] export as gsf
