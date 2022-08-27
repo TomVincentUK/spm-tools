@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+include requirements.txt
+graft spm_tools
+recursive-exclude * *.py[co]
+include versioneer.py
+include spm_tools/_version.py
