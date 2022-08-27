@@ -14,6 +14,7 @@ This should be a library to supplement the already existing image analysis tools
 - [ ] Grain marking (for SPM-specific defects not already covered by scikit image)
 - [ ] n-point levelling
 - [ ] Radial line profiles
+- [ ] Upload to conda-forge
 
 ## Things to fix
 - [ ] Functions need docstrings
