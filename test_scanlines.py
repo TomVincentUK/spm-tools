@@ -21,7 +21,7 @@ median_flat, median_correction = line_correction(noisy, method="median")
 median_diff_flat, median_diff_correction = line_correction(noisy, method="median_diff")
 
 fig, axes = plt.subplots(ncols=5)
-imshow_params = dict(extent=extent, origin='lower')
+imshow_params = dict(extent=extent, origin="lower")
 axes[0].imshow(Z, **imshow_params)
 axes[1].imshow(noisy, **imshow_params)
 axes[2].imshow(mean_flat, **imshow_params)
