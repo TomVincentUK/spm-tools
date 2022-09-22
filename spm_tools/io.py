@@ -44,12 +44,12 @@ def _import_gsf(path):
     # Convert known metadata values from strings
     for key in ("XRes", "YRes"):
         if key in metadata:
-            metadata[key] = np.int(metadata[key])
+            metadata[key] = int(metadata[key])
         else:
             raise ValueError(f"gsf file has no value for {key}")
     for key in ("XReal", "YReal", "XOffset", "YOffset"):
         if key in metadata:
-            metadata[key] = np.float(metadata[key])
+            metadata[key] = float(metadata[key])
 
     remaining_buffer = b"".join(lines[1 + n_metadata_lines :])
     nul_bites = ((len(remaining_buffer) - 1) % 4) + 1
